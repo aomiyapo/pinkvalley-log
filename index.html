@@ -15,8 +15,9 @@
     }
     .line {
         opacity: 0;
-        display: inline-block;
+        display: block;
         transition: opacity 0.3s, transform 0.1s;
+        margin-bottom: 4px; /* расстояние между строками */
     }
     .error {
         color: #ff0000;
@@ -28,7 +29,9 @@
 <div id="log"></div>
 
 <script>
-// Генерация 200+ строк лога
+// ==============================
+// Заменяешь массив lines на свой
+// ==============================
 const lines = [
 "|~USER_ID           : 01~|",
 "|~PROFILE_STATE     : RUNNING..~|",
@@ -98,22 +101,22 @@ const lines = [
 "|~SYSTEM_LOG_ENTRY_200 : ACTIVE~|"
 ];
 
-// Добавим ещё строки до 200+
-for (let i=0; i<200; i++){
-    lines.push("|~SYSTEM_LOG_ENTRY_" + i + " : ACTIVE~|");
-}
+// =================================
+// ВНИМАНИЕ: строки можно расширять до тысячи!
+// Просто заменяешь массив lines на свои строки
+// =================================
 
 const logDiv = document.getElementById('log');
 let i = 0;
 
 function showLine() {
-    if (i >= lines.length) return;
+    if(i >= lines.length) return;
 
     const lineEl = document.createElement('div');
     lineEl.className = 'line';
 
-    // шанс случайной ошибки 20%
-    if (Math.random() < 0.2) {
+    // 20% шанс случайной ошибки
+    if(Math.random() < 0.2){
         lineEl.textContent = "|~ERROR_UNKNOWN : CODE_" + Math.floor(Math.random()*999) + "~|";
         lineEl.classList.add('error');
     } else {
@@ -122,15 +125,15 @@ function showLine() {
 
     logDiv.appendChild(lineEl);
 
-    // дрожание строки при появлении
+    // дрожание строки
     setTimeout(() => {
         lineEl.style.opacity = 1;
         lineEl.style.transform = `translateX(${Math.random()*4-2}px) translateY(${Math.random()*4-2}px)`;
     }, 50);
 
     i++;
-    // случайная задержка 100–1500мс
-    setTimeout(showLine, 100 + Math.random()*1400);
+    // случайная задержка между 100–700 мс
+    setTimeout(showLine, 100 + Math.random()*600);
 }
 
 showLine();
