@@ -2,20 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Pink Valley System Log</title>
+<title>Pink Valley Panic Log</title>
 <style>
 body{
-  background:black;
-  color:#ff69b4;
-  font-family:monospace;
   margin:0;
   padding:20px;
+  font-family: monospace;
+  background:black;
+  color:#ff69b4;
   overflow:hidden;
 }
 
 #log{
   height:100vh;
   overflow-y:auto;
+  position:relative;
 }
 
 .line{
@@ -31,7 +32,7 @@ body{
 }
 
 .failure{
-  animation: glitch 3s infinite; /* дыхание 3s */
+  animation: glitch 3s infinite;
 }
 
 @keyframes glitch{
@@ -43,13 +44,12 @@ body{
 </head>
 <body>
 <div id="log"></div>
-
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', ()=>{
 
 const logDiv = document.getElementById('log');
 
-// ===== Сюжетные строки =====
+// ===== сюжетные строки =====
 const lines = [
 "|~USER_ID           : 01~|",
 "|~PROFILE_STATE     : RUNNING..~|",
@@ -105,7 +105,7 @@ const lines = [
 "|~ENTITY_REFLECTION : PRESENT~|"
 ];
 
-// ===== ENTRY Логи до 10_000 =====
+// ===== ENTRY логи до 10_000 =====
 for(let j=1; j<=10000; j++){
   lines.push(`|~SYSTEM_LOG_ENTRY_${j} : ACTIVE~|`);
 }
@@ -113,25 +113,22 @@ for(let j=1; j<=10000; j++){
 let i = 0;
 let failurePhase = false;
 const errorBlocks = [
-  {size:5},
-  {size:7},
-  {size:4},
-  {size:6},
+  {size:5},{size:7},{size:4},{size:6},
 ];
 let currentBlock = 0;
 let inBlock = false;
 let blockLinesLeft = 0;
+let panicMode = false;
 
-function showLine() {
+function showLine(){
   if(i >= lines.length) return;
 
   const lineEl = document.createElement('div');
   lineEl.className = 'line';
-
   let isError = false;
 
-  // включаем фазу SYSTEM FAILURE после 900-й строки
-  if(i >= 900 && !failurePhase){
+  // включаем SYSTEM FAILURE после 900-й строки
+  if(i>=700 && !failurePhase){
     failurePhase = true;
     document.body.classList.add("failure");
     inBlock = true;
@@ -143,17 +140,20 @@ function showLine() {
   if(failurePhase && inBlock && currentBlock < errorBlocks.length){
     lineEl.textContent = `|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
     lineEl.classList.add('error');
-
-    // прыгаем строки блока
+    // умеренный хаос блока
     lineEl.style.position = "relative";
-    lineEl.style.left = `${Math.random()*20-10}px`;
-    lineEl.style.top  = `${Math.random()*10-5}px`;
-
+    lineEl.style.left = `${Math.random()*40-20}px`;
+    lineEl.style.top = `${Math.random()*20-10}px`;
+    lineEl.style.transform = `rotate(${Math.random()*8-4}deg)`;
     blockLinesLeft--;
     isError = true;
-    if(blockLinesLeft <= 0){
+    if(blockLinesLeft <=0){
       inBlock = false;
       currentBlock++;
+      // после последнего блока включаем панический режим
+      if(currentBlock >= errorBlocks.length){
+        panicMode = true;
+      }
     }
   }
 
@@ -170,24 +170,33 @@ function showLine() {
   }
 
   logDiv.appendChild(lineEl);
-  logDiv.scrollTop = logDiv.scrollHeight;
+
+  // паника: строки разлетаются по экрану
+  if(panicMode){
+    lineEl.style.position = "absolute";
+    lineEl.style.left = `${Math.random()*(window.innerWidth-100)}px`;
+    lineEl.style.top = `${Math.random()*(window.innerHeight-20)}px`;
+    lineEl.style.transform = `rotate(${Math.random()*360-180}deg)`;
+  } else {
+    logDiv.scrollTop = logDiv.scrollHeight; // автоскролл до паники
+  }
+
   setTimeout(()=>{lineEl.style.opacity=1;},5);
 
   i++;
 
   // ===== задержка =====
-  let delay = 200; // сюжет
+  let delay = 200;
   if(failurePhase){
     if(inBlock && currentBlock <= errorBlocks.length){
-      delay = 150 + Math.random()*50; // медленно в блоке ошибок
+      delay = 150 + Math.random()*50; // медленно в блоках
+    } else if(panicMode){
+      delay = 5 + Math.random()*15; // паника
     } else {
-      // паника после блока
-      delay = 5 + Math.random()*15;
-      // лёгкое дергание строк после блока
-      lineEl.style.transform = `translate(${Math.random()*4-2}px, ${Math.random()*4-2}px)`;
+      delay = 20 + Math.random()*40; // ENTRY после блоков
     }
-  } else if(i > 50){
-    delay = 20 + Math.random()*40; // ENTRY лог
+  } else if(i>50){
+    delay = 20 + Math.random()*40; // ENTRY логи
   }
 
   setTimeout(showLine, delay);
