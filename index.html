@@ -60,12 +60,24 @@ const lines = [
 ];
 
 // ====== ENTRY Логи ======
-for(let i=1;i<=10000;i++){
+for(let i=1;i<=700;i++){
   lines.push(`|~SYSTEM_LOG_ENTRY_${i} : ACTIVE~|`);
 }
 
 let i = 0;
-let failureMode = false;
+let failurePhase = false;
+
+// параметры блоков ошибок
+const errorBlocks = [
+  {size:5, pause:1500},
+  {size:7, pause:2000},
+  {size:4, pause:1000},
+  {size:6, pause:1800},
+];
+
+let currentBlock = 0;
+let inBlock = false;
+let blockLinesLeft = 0;
 
 function showLine() {
   if(i >= lines.length) return;
@@ -73,28 +85,29 @@ function showLine() {
   const lineEl = document.createElement('div');
   lineEl.className = 'line';
 
-  // ===== включаем фазу сбоя после 900 строки =====
-  if(i >= 900 && !failureMode){
-    failureMode = true;
+  // включаем фазу SYSTEM FAILURE после 900 строки
+  if(i >= 900 && !failurePhase){
+    failurePhase = true;
     document.body.classList.add("failure");
+    inBlock = true;
+    blockLinesLeft = errorBlocks[currentBlock].size;
   }
 
-  // ===== режим сбоя =====
-  if(failureMode){
-    if(Math.random() < 0.6){
-      lineEl.textContent = `|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
-      lineEl.classList.add('error');
-    } else {
-      lineEl.textContent = lines[i];
-    }
-
-    // глитч-прыжки строк
+  if(failurePhase && inBlock){
+    // блок ошибок
+    lineEl.textContent = `|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
+    lineEl.classList.add('error');
     lineEl.style.position = "relative";
     lineEl.style.left = `${Math.random()*20-10}px`;
     lineEl.style.top  = `${Math.random()*10-5}px`;
+    blockLinesLeft--;
+    if(blockLinesLeft <= 0){
+      inBlock = false;
+      currentBlock++;
+    }
   } else {
     // обычные строки + случайные ошибки
-    if(Math.random() < 0.2){
+    if(failurePhase && Math.random()<0.2){
       lineEl.textContent = `|~ERROR_UNKNOWN : CODE_${Math.floor(Math.random()*999)}~|`;
       lineEl.classList.add('error');
     } else {
@@ -103,24 +116,27 @@ function showLine() {
   }
 
   logDiv.appendChild(lineEl);
-
-  // автоскролл
   logDiv.scrollTop = logDiv.scrollHeight;
-
-  setTimeout(()=>{
-    lineEl.style.opacity = 1;
-  }, 5);
+  setTimeout(()=>{lineEl.style.opacity=1;},5);
 
   i++;
 
   // ===== задержка =====
   let delay;
-  if(failureMode){
-    delay = 5;             // SYSTEM FAILURE — почти мгновенно
-  } else if(i > 50){       // ENTRY лог — быстрый режим
+  if(failurePhase){
+    if(inBlock){
+      delay = 20; // быстрые строки блока ошибок
+    } else if(currentBlock < errorBlocks.length){
+      delay = errorBlocks[currentBlock].pause; // пауза между блоками
+      inBlock = true;
+      blockLinesLeft = errorBlocks[currentBlock].size;
+    } else {
+      delay = 5; // финальная фаза — почти мгновенно
+    }
+  } else if(i > 50){ // ENTRY лог
     delay = 20 + Math.random()*40;
   } else {
-    delay = 200;           // нормальный темп первых 50 строк
+    delay = 200; // сюжетные строки
   }
 
   setTimeout(showLine, delay);
@@ -132,7 +148,7 @@ showLine();
 <style>
 body{
   background:black;
-  color:#ff69b4; /* светло-темно розовый для темы Pink Valley */
+  color:#ff69b4; /* светло-розовый текст */
   font-family:monospace;
   margin:0;
   padding:20px;
@@ -156,12 +172,12 @@ body{
 }
 
 .failure{
-  animation: glitch 2s infinite; /* медленное плавное мигание */
+  animation: glitch 2s infinite;
 }
 
 @keyframes glitch{
   0%{background-color:black;}
-  50%{background-color:#2b001f;} /* темно-розовый мигающий фон */
+  50%{background-color:#2b001f;} /* медленно мигающий темно-розовый фон */
   100%{background-color:black;}
 }
 </style>
