@@ -13,6 +13,12 @@ body{
   overflow:hidden;
 }
 
+#log{
+  height:100vh;
+  overflow-y:auto;
+  position:relative;
+}
+
 .line{
   opacity:0;
   transition:opacity 0.1s, transform 0.05s;
@@ -37,13 +43,11 @@ body{
 </style>
 </head>
 <body>
+<div id="log"></div>
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
 
-// попытка fullscreen
-if(document.documentElement.requestFullscreen){
-  document.documentElement.requestFullscreen().catch(()=>{});
-}
+const logDiv = document.getElementById('log');
 
 const lines = [
 "|~USER_ID           : 01~|",
@@ -99,6 +103,8 @@ const lines = [
 "|~REFLECTION_STATUS : DISTORTED~|",
 "|~ENTITY_REFLECTION : PRESENT~|"
 ];
+
+// ENTRY Логи до 10_000
 for(let j=1;j<=10000;j++){
   lines.push(`|~SYSTEM_LOG_ENTRY_${j} : ACTIVE~|`);
 }
@@ -131,10 +137,11 @@ function showLine(){
   if(failurePhase && inBlock && currentBlock<errorBlocks.length){
     lineEl.textContent=`|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
     lineEl.classList.add('error');
-    lineEl.style.position="absolute";
-    lineEl.style.left=`${Math.random()*(window.innerWidth-100)}px`;
-    lineEl.style.top=`${Math.random()*(window.innerHeight-20)}px`;
-    lineEl.style.transform=`rotate(${Math.random()*20-10}deg)`;
+    // умеренный хаос внутри блока
+    lineEl.style.position = "relative";
+    lineEl.style.left=`${Math.random()*40-20}px`;
+    lineEl.style.top=`${Math.random()*20-10}px`;
+    lineEl.style.transform=`rotate(${Math.random()*8-4}deg)`;
     blockLinesLeft--;
     isError=true;
     if(blockLinesLeft<=0){
@@ -165,14 +172,17 @@ function showLine(){
     lineEl.textContent=lines[i];
   }
 
-  document.body.appendChild(lineEl);
+  logDiv.appendChild(lineEl);
 
-  // паника для новых строк
+  // паника: новые строки разлетаются
   if(panicMode){
     lineEl.style.position="absolute";
     lineEl.style.left=`${Math.random()*(window.innerWidth-100)}px`;
     lineEl.style.top=`${Math.random()*(window.innerHeight-20)}px`;
     lineEl.style.transform=`rotate(${Math.random()*360-180}deg)`;
+  } else {
+    // автоскролл до блока ошибок
+    logDiv.scrollTop = logDiv.scrollHeight;
   }
 
   setTimeout(()=>{lineEl.style.opacity=1;},5);
@@ -183,14 +193,14 @@ function showLine(){
   let delay=200;
   if(failurePhase){
     if(inBlock && currentBlock<=errorBlocks.length){
-      delay=150+Math.random()*50;
+      delay=150+Math.random()*50; // медленные блоки ошибок
     }else if(panicMode){
-      delay=5+Math.random()*15;
+      delay=5+Math.random()*15; // паника
     }else{
-      delay=20+Math.random()*40;
+      delay=20+Math.random()*40; // ENTRY после блока
     }
   }else if(i>50){
-    delay=20+Math.random()*40;
+    delay=20+Math.random()*40; // обычные ENTRY
   }
 
   setTimeout(showLine, delay);
