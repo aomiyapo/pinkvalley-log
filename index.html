@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Pink Valley Panic Log</title>
 <style>
-body{
+body {
   margin:0;
   padding:0;
   font-family: monospace;
@@ -12,33 +12,33 @@ body{
   color:#ff69b4;
   overflow:hidden;
 }
-
-#log{
+#log {
   height:100vh;
   overflow-y:auto;
   position:relative;
 }
-
-.line{
+.line {
   opacity:0;
   transition:opacity 0.1s;
-  margin-bottom:2px;
   display:block;
+  margin-bottom:2px;
+  white-space: pre;
 }
-
-.error{
+.error {
   color:#ff1493;
   font-weight:bold;
 }
-
-.failure{
+.failure {
   animation: glitch 3s infinite;
 }
-
-@keyframes glitch{
+@keyframes glitch {
   0%{background-color:black;}
   50%{background-color:#2b001f;}
   100%{background-color:black;}
+}
+.char {
+  display:inline-block;
+  transition: color 0.2s;
 }
 </style>
 </head>
@@ -46,10 +46,9 @@ body{
 <div id="log"></div>
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
+  const logDiv = document.getElementById('log');
 
-const logDiv = document.getElementById('log');
-
-const lines = [
+  const lines = [
 "|~USER_ID           : 01~|",
 "|~PROFILE_STATE     : RUNNING..~|",
 "|~RESPIRATION       : [ON]~|",
@@ -104,117 +103,123 @@ const lines = [
 "|~ENTITY_REFLECTION : PRESENT~|"
 ];
 
-for(let j=1;j<=10000;j++){
-  lines.push(`|~SYSTEM_LOG_ENTRY_${j} : ACTIVE~|`);
-}
-
-let i=0;
-let failurePhase=false;
-const errorBlocks=[{size:5},{size:7},{size:4},{size:6}];
-let currentBlock=0;
-let inBlock=false;
-let blockLinesLeft=0;
-let panicMode=false;
-const flyingLines = []; // все линии для паники
-
-function updatePanic(){
-  flyingLines.forEach(l=>{
-    l.style.left = `${Math.random()*(window.innerWidth-100)}px`;
-    l.style.top = `${Math.random()*(window.innerHeight-20)}px`;
-    l.style.transform = `rotate(${Math.random()*360-180}deg)`;
-  });
-  requestAnimationFrame(updatePanic);
-}
-
-function showLine(){
-  if(i>=lines.length) return;
-
-  const lineEl=document.createElement('div');
-  lineEl.className='line';
-  let isError=false;
-
-  if(i>=700 && !failurePhase){
-    failurePhase=true;
-    document.body.classList.add('failure');
-    inBlock=true;
-    blockLinesLeft=errorBlocks[0].size;
-    currentBlock=0;
+  for(let j=1;j<=10000;j++){
+    lines.push(`|~SYSTEM_LOG_ENTRY_${j} : ACTIVE~|`);
   }
 
-  // блок ошибок
-  if(failurePhase && inBlock && currentBlock<errorBlocks.length){
-    lineEl.textContent=`|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
-    lineEl.classList.add('error');
-    lineEl.style.position = "relative";
-    lineEl.style.left=`${Math.random()*40-20}px`;
-    lineEl.style.top=`${Math.random()*20-10}px`;
-    lineEl.style.transform=`rotate(${Math.random()*8-4}deg)`;
-    blockLinesLeft--;
-    isError=true;
-    if(blockLinesLeft<=0){
-      inBlock=false;
-      currentBlock++;
-      if(currentBlock>=errorBlocks.length){
-        panicMode=true;
-        const allLines=document.querySelectorAll('.line');
-        allLines.forEach(l=>{
-          l.style.position="absolute";
-          l.style.left=`${Math.random()*(window.innerWidth-100)}px`;
-          l.style.top=`${Math.random()*(window.innerHeight-20)}px`;
-          l.style.transform=`rotate(${Math.random()*360-180}deg)`;
-          flyingLines.push(l);
-        });
-        updatePanic(); // запускаем непрерывную анимацию
+  let i = 0;
+  let failurePhase = false;
+  const errorBlocks = [5,7,4,6];
+  let currentBlock = 0;
+  let blockLinesLeft = 0;
+  let inBlock = false;
+  let panicMode = false;
+
+  const flyingLines = [];
+
+  function updatePanic() {
+    flyingLines.forEach(l=>{
+      l.style.left = Math.random()*(window.innerWidth-100)+"px";
+      l.style.top = Math.random()*(window.innerHeight-20)+"px";
+      l.style.transform = `rotate(${Math.random()*360-180}deg)`;
+      // мигание букв
+      const chars = l.querySelectorAll('.char');
+      chars.forEach(c=>{
+        if(Math.random()<0.1){
+          c.style.color = ['#ff69b4','#ff1493','#ffb6c1'][Math.floor(Math.random()*3)];
+        }
+      });
+    });
+    requestAnimationFrame(updatePanic);
+  }
+
+  function showLine(){
+    if(i>=lines.length) return;
+
+    const lineEl = document.createElement('div');
+    lineEl.className = 'line';
+    let isError=false;
+
+    if(i>=700 && !failurePhase){
+      failurePhase = true;
+      document.body.classList.add('failure');
+      inBlock = true;
+      blockLinesLeft = errorBlocks[0];
+      currentBlock = 0;
+    }
+
+    if(failurePhase && inBlock && currentBlock<errorBlocks.length){
+      lineEl.textContent = `|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
+      lineEl.classList.add('error');
+      lineEl.style.position="relative";
+      lineEl.style.left=`${Math.random()*40-20}px`;
+      lineEl.style.top=`${Math.random()*20-10}px`;
+      lineEl.style.transform=`rotate(${Math.random()*8-4}deg)`;
+      blockLinesLeft--;
+      isError = true;
+
+      if(blockLinesLeft<=0){
+        inBlock=false;
+        currentBlock++;
+        if(currentBlock>=errorBlocks.length){
+          panicMode=true;
+          const allLines = document.querySelectorAll('.line');
+          allLines.forEach(l=>{
+            l.style.position="absolute";
+            l.style.left=Math.random()*(window.innerWidth-100)+"px";
+            l.style.top=Math.random()*(window.innerHeight-20)+"px";
+            l.style.transform = `rotate(${Math.random()*360-180}deg)`;
+            // разбиваем текст на span для мигания
+            l.innerHTML = l.textContent.split('').map(c=>`<span class="char">${c}</span>`).join('');
+            flyingLines.push(l);
+          });
+          updatePanic();
+        }
       }
     }
-  }
 
-  // случайные ошибки
-  if(Math.random()<0.2){
-    lineEl.textContent=`|~ERROR_UNKNOWN : CODE_${Math.floor(Math.random()*999)}~|`;
-    lineEl.classList.add('error');
-    isError=true;
-  }
-
-  if(!isError){
-    lineEl.textContent=lines[i];
-  }
-
-  logDiv.appendChild(lineEl);
-
-  // если паника, добавляем новые строки в массив для полета
-  if(panicMode){
-    lineEl.style.position="absolute";
-    lineEl.style.left=`${Math.random()*(window.innerWidth-100)}px`;
-    lineEl.style.top=`${Math.random()*(window.innerHeight-20)}px`;
-    lineEl.style.transform=`rotate(${Math.random()*360-180}deg)`;
-    flyingLines.push(lineEl);
-  } else {
-    logDiv.scrollTop = logDiv.scrollHeight; // автоскролл до блока
-  }
-
-  setTimeout(()=>{lineEl.style.opacity=1;},5);
-
-  i++;
-
-  let delay=200;
-  if(failurePhase){
-    if(inBlock && currentBlock<=errorBlocks.length){
-      delay=150+Math.random()*50;
-    }else if(panicMode){
-      delay=5+Math.random()*15;
-    }else{
-      delay=20+Math.random()*40;
+    if(Math.random()<0.2){
+      lineEl.textContent = `|~ERROR_UNKNOWN : CODE_${Math.floor(Math.random()*999)}~|`;
+      lineEl.classList.add('error');
+      isError = true;
     }
-  }else if(i>50){
-    delay=20+Math.random()*40;
+
+    if(!isError) lineEl.textContent = lines[i];
+
+    logDiv.appendChild(lineEl);
+
+    if(panicMode){
+      lineEl.style.position="absolute";
+      lineEl.style.left=Math.random()*(window.innerWidth-100)+"px";
+      lineEl.style.top=Math.random()*(window.innerHeight-20)+"px";
+      lineEl.style.transform = `rotate(${Math.random()*360-180}deg)`;
+      lineEl.innerHTML = lineEl.textContent.split('').map(c=>`<span class="char">${c}</span>`).join('');
+      flyingLines.push(lineEl);
+    } else {
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    setTimeout(()=>{lineEl.style.opacity=1},5);
+
+    i++;
+
+    let delay = 200;
+    if(failurePhase){
+      if(inBlock && currentBlock<=errorBlocks.length){
+        delay = 150 + Math.random()*50;
+      } else if(panicMode){
+        delay = 5 + Math.random()*15;
+      } else {
+        delay = 20 + Math.random()*40;
+      }
+    } else if(i>50){
+      delay = 20 + Math.random()*40;
+    }
+
+    setTimeout(showLine, delay);
   }
 
-  setTimeout(showLine, delay);
-}
-
-showLine();
-
+  showLine();
 });
 </script>
 </body>
