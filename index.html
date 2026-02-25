@@ -9,23 +9,26 @@ body {
   padding:0;
   font-family: monospace;
   background:black;
-  color:#ff69b4;
   overflow:hidden;
 }
 #log {
+  position:relative;
   height:100vh;
   overflow-y:auto;
-  position:relative;
 }
 .line {
   display:block;
-  margin-bottom:2px;
+  margin:2px 0;
   white-space: pre;
   opacity:0;
-  transition:opacity 0.1s;
+  transition: opacity 0.1s;
 }
 .line.error {
   color:#ff1493;
+  font-weight:bold;
+}
+.line.critical {
+  color:#ff0000;
   font-weight:bold;
 }
 .char {
@@ -39,22 +42,29 @@ body {
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
   const logDiv = document.getElementById('log');
-
   const totalLines = 1000; // для теста, потом можно 10000
   const flyingLines = [];
   let i=0;
   let failurePhase=false;
+  let panicMode=false;
   const errorBlocks=[5,7,4,6];
   let currentBlock=0;
   let blockLinesLeft=0;
   let inBlock=false;
-  let panicMode=false;
 
   function updatePanic(){
     flyingLines.forEach(obj=>{
-      obj.el.style.left = Math.random()*(window.innerWidth-200)+'px';
-      obj.el.style.top = Math.random()*(window.innerHeight-20)+'px';
+      // хаотичное движение
+      obj.el.style.left = parseFloat(obj.el.style.left||0) + obj.speedX + 'px';
+      obj.el.style.top = parseFloat(obj.el.style.top||0) + obj.speedY + 'px';
       obj.el.style.transform = `rotate(${Math.random()*360-180}deg)`;
+
+      // границы экрана
+      if(parseFloat(obj.el.style.left)<0) obj.el.style.left='0px';
+      if(parseFloat(obj.el.style.left)>window.innerWidth-200) obj.el.style.left=(window.innerWidth-200)+'px';
+      if(parseFloat(obj.el.style.top)<0) obj.el.style.top='0px';
+      if(parseFloat(obj.el.style.top)>window.innerHeight-20) obj.el.style.top=(window.innerHeight-20)+'px';
+
       // мигание букв
       const chars = obj.el.querySelectorAll('.char');
       chars.forEach(c=>{
@@ -71,46 +81,56 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     const lineEl = document.createElement('div');
     lineEl.className='line';
-    let text;
+    let text, isError=false;
 
-    // запускаем блок ошибок на 700-й строке
-    if(i>=700 && !failurePhase){
-      failurePhase = true;
-      inBlock = true;
-      blockLinesLeft = errorBlocks[0];
-      currentBlock = 0;
+    // старт блока ошибок на 700-й строке
+    if(i===700){
+      failurePhase=true;
+      inBlock=true;
+      blockLinesLeft=errorBlocks[0];
+      currentBlock=0;
     }
 
     // блок ошибок
     if(failurePhase && inBlock && currentBlock<errorBlocks.length){
       text = `|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
-      lineEl.classList.add('error');
+      lineEl.classList.add('critical');
+      isError=true;
       blockLinesLeft--;
       if(blockLinesLeft<=0){
         inBlock=false;
         currentBlock++;
-        if(currentBlock>=errorBlocks.length){
-          panicMode=true;
-        } else {
+        if(currentBlock<errorBlocks.length){
           blockLinesLeft = errorBlocks[currentBlock];
+        } else {
+          panicMode=true;
         }
       }
     } else {
       // случайные ошибки
-      if(Math.random()<0.05) text = `|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
-      else if(Math.random()<0.2) text = `|~ERROR_UNKNOWN : CODE_${Math.floor(Math.random()*999)}~|`;
-      else text = `|~SYSTEM_LOG_ENTRY_${i} : ACTIVE~|`;
+      if(Math.random()<0.05){
+        text = `|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
+        lineEl.classList.add('critical');
+        isError=true;
+      } else if(Math.random()<0.2){
+        text = `|~ERROR_UNKNOWN : CODE_${Math.floor(Math.random()*999)}~|`;
+        lineEl.classList.add('error');
+        isError=true;
+      } else {
+        text = `|~SYSTEM_LOG_ENTRY_${i} : ACTIVE~|`;
+      }
     }
 
-    // делим текст на span для мигания
+    // делим на span для мигания
     lineEl.innerHTML = text.split('').map(c=>`<span class="char">${c}</span>`).join('');
 
-    // позиция и добавление в панике
     if(panicMode){
       lineEl.style.position="absolute";
-      lineEl.style.left=Math.random()*(window.innerWidth-200)+'px';
-      lineEl.style.top=Math.random()*(window.innerHeight-20)+'px';
-      flyingLines.push({el:lineEl, speedX:(Math.random()-0.5)*2, speedY:(Math.random()-0.5)*2});
+      lineEl.style.left = Math.random()*(window.innerWidth-200)+'px';
+      lineEl.style.top = Math.random()*(window.innerHeight-20)+'px';
+      lineEl.speedX=(Math.random()-0.5)*4;
+      lineEl.speedY=(Math.random()-0.5)*4;
+      flyingLines.push({el:lineEl, speedX:lineEl.speedX, speedY:lineEl.speedY});
       updatePanic();
     }
 
@@ -122,12 +142,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     i++;
 
-    // хаотичная скорость печатки после паники
+    // хаотичная скорость печатки
     let delay;
     if(!panicMode){
-      delay = 50 + Math.random()*50; // до паники
+      delay = 50 + Math.random()*50;
     } else {
-      delay = 5 + Math.random()*100; // хаотично после паники
+      delay = 5 + Math.random()*100;
     }
 
     setTimeout(showLine, delay);
@@ -137,4 +157,4 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 </script>
 </body>
-</html>
+</html>ыы
