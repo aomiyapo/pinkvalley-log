@@ -1,8 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pink Valley System Log</title>
+<style>
+body{
+  background:black;
+  color:#ff69b4;
+  font-family:monospace;
+  margin:0;
+  padding:20px;
+  overflow:hidden;
+}
+
+#log{
+  height:100vh;
+  overflow-y:auto;
+}
+
+.line{
+  opacity:0;
+  transition:opacity 0.1s, transform 0.05s;
+  margin-bottom:2px;
+  display:block;
+}
+
+.error{
+  color:#ff1493;
+  font-weight:bold;
+}
+
+.failure{
+  animation: glitch 3s infinite; /* дыхание 3s */
+}
+
+@keyframes glitch{
+  0%{background-color:black;}
+  50%{background-color:#2b001f;}
+  100%{background-color:black;}
+}
+</style>
+</head>
+<body>
 <div id="log"></div>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+
 const logDiv = document.getElementById('log');
 
+// ===== Сюжетные строки =====
 const lines = [
 "|~USER_ID           : 01~|",
 "|~PROFILE_STATE     : RUNNING..~|",
@@ -58,22 +105,19 @@ const lines = [
 "|~ENTITY_REFLECTION : PRESENT~|"
 ];
 
-// ENTRY логи
-for(let j=1;j<=900;j++){
+// ===== ENTRY Логи до 10_000 =====
+for(let j=1; j<=10000; j++){
   lines.push(`|~SYSTEM_LOG_ENTRY_${j} : ACTIVE~|`);
 }
 
 let i = 0;
 let failurePhase = false;
-
-// блоки ошибок
 const errorBlocks = [
   {size:5},
   {size:7},
   {size:4},
   {size:6},
 ];
-
 let currentBlock = 0;
 let inBlock = false;
 let blockLinesLeft = 0;
@@ -86,21 +130,25 @@ function showLine() {
 
   let isError = false;
 
-  // включаем фазу SYSTEM FAILURE
+  // включаем фазу SYSTEM FAILURE после 900-й строки
   if(i >= 900 && !failurePhase){
     failurePhase = true;
     document.body.classList.add("failure");
     inBlock = true;
-    blockLinesLeft = errorBlocks[currentBlock].size;
+    blockLinesLeft = errorBlocks[0].size;
+    currentBlock = 0;
   }
 
   // ===== блок ошибок =====
-  if(failurePhase && inBlock){
+  if(failurePhase && inBlock && currentBlock < errorBlocks.length){
     lineEl.textContent = `|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
     lineEl.classList.add('error');
+
+    // прыгаем строки блока
     lineEl.style.position = "relative";
     lineEl.style.left = `${Math.random()*20-10}px`;
     lineEl.style.top  = `${Math.random()*10-5}px`;
+
     blockLinesLeft--;
     isError = true;
     if(blockLinesLeft <= 0){
@@ -128,56 +176,26 @@ function showLine() {
   i++;
 
   // ===== задержка =====
-  let delay;
-  if(failurePhase && inBlock){
-    delay = 150 + Math.random()*50; // медленно в блоке ошибок
-  } else if(failurePhase){
-    delay = 20 + Math.random()*40; // после блока — обычная паника
+  let delay = 200; // сюжет
+  if(failurePhase){
+    if(inBlock && currentBlock <= errorBlocks.length){
+      delay = 150 + Math.random()*50; // медленно в блоке ошибок
+    } else {
+      // паника после блока
+      delay = 5 + Math.random()*15;
+      // лёгкое дергание строк после блока
+      lineEl.style.transform = `translate(${Math.random()*4-2}px, ${Math.random()*4-2}px)`;
+    }
   } else if(i > 50){
     delay = 20 + Math.random()*40; // ENTRY лог
-  } else {
-    delay = 200; // сюжетные строки
   }
 
   setTimeout(showLine, delay);
 }
 
 showLine();
+
+});
 </script>
-
-<style>
-body{
-  background:black;
-  color:#ff69b4;
-  font-family:monospace;
-  margin:0;
-  padding:20px;
-  overflow:hidden;
-}
-
-#log{
-  height:100vh;
-  overflow-y:auto;
-}
-
-.line{
-  opacity:0;
-  transition:opacity 0.1s, transform 0.05s;
-  margin-bottom:2px;
-}
-
-.error{
-  color:#ff1493;
-  font-weight:bold;
-}
-
-.failure{
-  animation: glitch 2s infinite;
-}
-
-@keyframes glitch{
-  0%{background-color:black;}
-  50%{background-color:#2b001f;}
-  100%{background-color:black;}
-}
-</style>
+</body>
+</html>
