@@ -3,74 +3,60 @@
 <script>
 const logDiv = document.getElementById('log');
 
-// ====== Сюжетные строки ======
+// ====== Сюжетные строки (50) ======
 const lines = [
 "|~USER_ID           : 01~|",
 "|~PROFILE_STATE     : RUNNING..~|",
 "|~RESPIRATION       : [ON]~|",
-"|~OXYGEN_LEVEL      : {NOT_FOUND}~|",
-"|~HEART_RATE        : 148@#&$*~|",
-"|~LOCATION          : SUPERMARKET~|",
-"|~ENTITY_SCAN       : POSITIVE~|",
-"|~DOOR_ACCESS       : FILE_NOT_EXIST~|",
-"|~ESCAPE_ROUTE      : NOT_FOUND~|",
-"|~SYSTEM_WARNING    : AIR_SUPPLY_CRITICAL~|",
-"|~SYSTEM_WARNING    : ENVIRONMENT_UNSTABLE~|",
-"|~SYSTEM_STATUS     : RUNNING~|",
-"|~ENERGY_LEVEL      : LOW~|",
-"|~TEMPERATURE       : RISING~|",
-"|~MEMORY_STATUS     : CRITICAL~|",
-"|~CPU_USAGE         : 99% !!~|",
-"|~DISK_SPACE        : LOW~|",
-"|~ENVIRONMENT_STATUS: HOSTILE~|",
-"|~ENTITY_BEHAVIOR   : UNPREDICTABLE~|",
-"|~AUDIO_FEEDBACK    : SCREAMING~|",
-"|~SYSTEM_GLITCH     : TRUE~|",
-"|~ALL_FUCKING_IDIOTS_EXCEPT_ME~|",
-"|~CAMERA_FEED       : ONLINE~|",
-"|~VISUAL_FEED       : DISTORTED~|",
-"|~SENSOR_FEED       : ACTIVE~|",
-"|~NETWORK_STATUS    : CONNECTED~|",
-"|~CORRIDOR_ALERT    : ACTIVE~|",
-"|~LIGHTS_FAILURE    : FALSE~|",
-"|~SECURITY_PROTOCOL : ENGAGED~|",
-"|~RISK_LEVEL        : SEVERE~|",
-"|~CURRENT_AREA      : TILE_CORRIDOR~|",
-"|~CORRIDOR_LENGTH   : EXTENDED~|",
-"|~LIGHTING_STATUS   : FLICKERING ~~~~|",
-"|~AUDIO_INPUT       : STATIC && CRACKLE~|",
+"|~OXYGEN_LEVEL      : 98%~|",
+"|~HEART_RATE        : 72 BPM~|",
+"|~LOCATION          : UNKNOWN~|",
+"|~LOCATION_UPDATE   : SUPERMARKET~|",
+"|~LIGHTING_STATUS   : FLICKERING~|",
+"|~AUDIO_INPUT       : DISTANT HUM~|",
+"|~ENTITY_SCAN       : NEGATIVE~|",
+"|~AISLE_03_STATUS   : EMPTY~|",
+"|~AISLE_07_STATUS   : PRODUCT_DISPLACED~|",
+"|~FREEZER_TEMP      : -12C~|",
+"|~OXYGEN_LEVEL      : 95%~|",
 "|~NOISE_SOURCE      : UNKNOWN~|",
-"|~ENTITY_ID         : UNREGISTERED~|",
-"|~ENTITY_DISTANCE   : VARIABLE~|",
-"|~OBJECTIVE         : SURVIVE~|",
-"|~SAFE_ZONE         : NULL~|",
-"|~SYSTEM_LOG_SIZE   : 4521 KB~|",
-"|~REACTOR_STATUS    : STABLE~|",
-"|~SYSTEM_CHECK      : OK~|",
-"|~ADRENALINE_LEVEL  : HIGH~|",
-"|~BLOOD_OXYGEN      : CRITICAL~|",
-"|~SYSTEM_LOG_ENTRY_1 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_2 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_3 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_4 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_5 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_6 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_7 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_8 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_9 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_10 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_11 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_12 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_13 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_14 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_15 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_16 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_17 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_18 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_19 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_20 : ACTIVE~|",
-...
-"|~SYSTEM_LOG_ENTRY_200 : ACTIVE~|"
+"|~ENTITY_SCAN       : POSITIVE~|",
+"|~ENTITY_DISTANCE   : 24m~|",
+"|~ENTITY_DISTANCE   : 18m~|",
+"|~ENTITY_DISTANCE   : 11m~|",
+"|~HEART_RATE        : 103 BPM~|",
+"|~ESCAPE_ROUTE      : BLOCKED~|",
+"|~DOOR_ACCESS       : DENIED~|",
+"|~AUDIO_FEEDBACK    : STATIC~|",
+"|~LOCATION_UPDATE   : TILE_CORRIDOR~|",
+"|~CORRIDOR_LENGTH   : EXTENDED~|",
+"|~LIGHTING_STATUS   : DIM~|",
+"|~WALL_PATTERN      : REPEATING~|",
+"|~ENTITY_SCAN       : LOST_SIGNAL~|",
+"|~FOOTSTEP_AUDIO    : ECHO~|",
+"|~HEART_RATE        : 119 BPM~|",
+"|~SYSTEM_GLITCH     : TRUE~|",
+"|~TEXTURE_ERROR     : CODE_441~|",
+"|~CORRIDOR_END      : NOT_FOUND~|",
+"|~CORRIDOR_END      : NOT_FOUND~|",
+"|~LOCATION_UPDATE   : SCHOOL_BUILDING~|",
+"|~ROOM_ID           : CLASSROOM_04~|",
+"|~BOARD_TEXT        : UNREADABLE~|",
+"|~DESK_COUNT        : 19~|",
+"|~STUDENT_STATUS    : NONE_PRESENT~|",
+"|~ENTITY_SCAN       : POSITIVE~|",
+"|~ENTITY_ID         : TILIN~|",
+"|~ENTITY_BEHAVIOR   : STATIONARY~|",
+"|~ENTITY_HEAD_ROT   : 180_DEG~|",
+"|~AUDIO_INPUT       : BREATHING~|",
+"|~HEART_RATE        : 137 BPM~|",
+"|~ESCAPE_ROUTE      : DOOR_OPEN~|",
+"|~LOCATION_UPDATE   : SHOWER_ROOM~|",
+"|~WATER_FLOW        : ACTIVE~|",
+"|~TEMPERATURE       : 41C~|",
+"|~FLOOR_STATUS      : WET~|",
+"|~REFLECTION_STATUS : DISTORTED~|",
+"|~ENTITY_REFLECTION : PRESENT~|"
 ];
 
 // ====== ENTRY Логи ======
@@ -87,13 +73,13 @@ function showLine() {
   const lineEl = document.createElement('div');
   lineEl.className = 'line';
 
-  // 🔥 включаем фазу сбоя после 900 строки
+  // ===== включаем фазу сбоя после 900 строки =====
   if(i >= 900 && !failureMode){
     failureMode = true;
     document.body.classList.add("failure");
   }
 
-  // режим сбоя
+  // ===== режим сбоя =====
   if(failureMode){
     if(Math.random() < 0.6){
       lineEl.textContent = `|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
@@ -101,6 +87,11 @@ function showLine() {
     } else {
       lineEl.textContent = lines[i];
     }
+
+    // глитч-прыжки строк
+    lineEl.style.position = "relative";
+    lineEl.style.left = `${Math.random()*20-10}px`;
+    lineEl.style.top  = `${Math.random()*10-5}px`;
   } else {
     // обычные строки + случайные ошибки
     if(Math.random() < 0.2){
@@ -118,19 +109,18 @@ function showLine() {
 
   setTimeout(()=>{
     lineEl.style.opacity = 1;
-    lineEl.style.transform = `translateX(${Math.random()*4-2}px) translateY(${Math.random()*4-2}px)`;
   }, 5);
 
   i++;
 
-  // задержка
+  // ===== задержка =====
   let delay;
   if(failureMode){
     delay = 5;             // SYSTEM FAILURE — почти мгновенно
-  } else if(i > 10){       // ENTRY лог — быстрый режим
+  } else if(i > 50){       // ENTRY лог — быстрый режим
     delay = 20 + Math.random()*40;
   } else {
-    delay = 200;           // нормальный темп первых строк
+    delay = 200;           // нормальный темп первых 50 строк
   }
 
   setTimeout(showLine, delay);
@@ -142,7 +132,7 @@ showLine();
 <style>
 body{
   background:black;
-  color:#00ff00;
+  color:#ff69b4; /* светло-темно розовый для темы Pink Valley */
   font-family:monospace;
   margin:0;
   padding:20px;
@@ -161,7 +151,7 @@ body{
 }
 
 .error{
-  color:red;
+  color:#ff1493; /* темно-розовый для ошибок */
   font-weight:bold;
 }
 
@@ -171,7 +161,7 @@ body{
 
 @keyframes glitch{
   0%{background-color:black;}
-  50%{background-color:#110000;}
+  50%{background-color:#2b001f;} /* темно-розовый мигающий фон */
   100%{background-color:black;}
 }
 </style>
