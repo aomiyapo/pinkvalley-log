@@ -3,7 +3,6 @@
 <script>
 const logDiv = document.getElementById('log');
 
-// ====== Сюжетные строки (пример 50) ======
 const lines = [
 "|~USER_ID           : 01~|",
 "|~PROFILE_STATE     : RUNNING..~|",
@@ -59,7 +58,7 @@ const lines = [
 "|~ENTITY_REFLECTION : PRESENT~|"
 ];
 
-// ====== ENTRY Логи ======
+// ENTRY логи
 for(let j=1;j<=900;j++){
   lines.push(`|~SYSTEM_LOG_ENTRY_${j} : ACTIVE~|`);
 }
@@ -69,10 +68,10 @@ let failurePhase = false;
 
 // блоки ошибок
 const errorBlocks = [
-  {size:5, pause:1500},
-  {size:7, pause:2000},
-  {size:4, pause:1000},
-  {size:6, pause:1800},
+  {size:5},
+  {size:7},
+  {size:4},
+  {size:6},
 ];
 
 let currentBlock = 0;
@@ -110,14 +109,14 @@ function showLine() {
     }
   }
 
-  // ===== рандомные ошибки =====
+  // ===== случайные ошибки =====
   if(Math.random() < 0.2){
     lineEl.textContent = `|~ERROR_UNKNOWN : CODE_${Math.floor(Math.random()*999)}~|`;
     lineEl.classList.add('error');
     isError = true;
   }
 
-  // ===== обычная строка =====
+  // обычная строка
   if(!isError){
     lineEl.textContent = lines[i];
   }
@@ -129,19 +128,15 @@ function showLine() {
   i++;
 
   // ===== задержка =====
-  let delay = 200; // сюжет
-  if(failurePhase){
-    if(inBlock){
-      delay = 20; // быстрые строки блока ошибок
-    } else if(currentBlock < errorBlocks.length){
-      delay = errorBlocks[currentBlock].pause; // пауза между блоками
-      inBlock = true;
-      blockLinesLeft = errorBlocks[currentBlock].size;
-    } else {
-      delay = 5; // финальная фаза — почти мгновенно
-    }
+  let delay;
+  if(failurePhase && inBlock){
+    delay = 150 + Math.random()*50; // медленно в блоке ошибок
+  } else if(failurePhase){
+    delay = 20 + Math.random()*40; // после блока — обычная паника
   } else if(i > 50){
-    delay = 20 + Math.random()*40; // ENTRY
+    delay = 20 + Math.random()*40; // ENTRY лог
+  } else {
+    delay = 200; // сюжетные строки
   }
 
   setTimeout(showLine, delay);
@@ -177,7 +172,7 @@ body{
 }
 
 .failure{
-  animation: glitch 3.5s infinite;
+  animation: glitch 2s infinite;
 }
 
 @keyframes glitch{
