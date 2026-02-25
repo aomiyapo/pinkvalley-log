@@ -3,7 +3,7 @@
 <script>
 const logDiv = document.getElementById('log');
 
-// ====== Сюжетные строки (50) ======
+// ====== Сюжетные строки (пример 50) ======
 const lines = [
 "|~USER_ID           : 01~|",
 "|~PROFILE_STATE     : RUNNING..~|",
@@ -60,14 +60,14 @@ const lines = [
 ];
 
 // ====== ENTRY Логи ======
-for(let i=1;i<=900;i++){
-  lines.push(`|~SYSTEM_LOG_ENTRY_${i} : ACTIVE~|`);
+for(let j=1;j<=900;j++){
+  lines.push(`|~SYSTEM_LOG_ENTRY_${j} : ACTIVE~|`);
 }
 
 let i = 0;
 let failurePhase = false;
 
-// Параметры блоков ошибок
+// блоки ошибок
 const errorBlocks = [
   {size:5, pause:1500},
   {size:7, pause:2000},
@@ -87,7 +87,7 @@ function showLine() {
 
   let isError = false;
 
-  // включаем фазу SYSTEM FAILURE после 900 строки
+  // включаем фазу SYSTEM FAILURE
   if(i >= 900 && !failurePhase){
     failurePhase = true;
     document.body.classList.add("failure");
@@ -95,9 +95,8 @@ function showLine() {
     blockLinesLeft = errorBlocks[currentBlock].size;
   }
 
-  // ===== вывод линии =====
+  // ===== блок ошибок =====
   if(failurePhase && inBlock){
-    // блок ошибок
     lineEl.textContent = `|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
     lineEl.classList.add('error');
     lineEl.style.position = "relative";
@@ -111,14 +110,14 @@ function showLine() {
     }
   }
 
-  // рандомные ошибки везде
+  // ===== рандомные ошибки =====
   if(Math.random() < 0.2){
     lineEl.textContent = `|~ERROR_UNKNOWN : CODE_${Math.floor(Math.random()*999)}~|`;
     lineEl.classList.add('error');
     isError = true;
   }
 
-  // если не ошибка, обычная строка
+  // ===== обычная строка =====
   if(!isError){
     lineEl.textContent = lines[i];
   }
@@ -130,7 +129,7 @@ function showLine() {
   i++;
 
   // ===== задержка =====
-  let delay;
+  let delay = 200; // сюжет
   if(failurePhase){
     if(inBlock){
       delay = 20; // быстрые строки блока ошибок
@@ -141,10 +140,8 @@ function showLine() {
     } else {
       delay = 5; // финальная фаза — почти мгновенно
     }
-  } else if(i > 50){ // ENTRY лог
-    delay = 20 + Math.random()*40;
-  } else {
-    delay = 200; // сюжетные строки
+  } else if(i > 50){
+    delay = 20 + Math.random()*40; // ENTRY
   }
 
   setTimeout(showLine, delay);
@@ -156,7 +153,7 @@ showLine();
 <style>
 body{
   background:black;
-  color:#ff69b4; /* светло-розовый текст */
+  color:#ff69b4;
   font-family:monospace;
   margin:0;
   padding:20px;
@@ -175,17 +172,17 @@ body{
 }
 
 .error{
-  color:#ff1493; /* темно-розовый для ошибок */
+  color:#ff1493;
   font-weight:bold;
 }
 
 .failure{
-  animation: glitch 3.5s infinite; /* медленное мигание фона */
+  animation: glitch 3.5s infinite;
 }
 
 @keyframes glitch{
   0%{background-color:black;}
-  50%{background-color:#2b001f;} /* темно-розовый */
+  50%{background-color:#2b001f;}
   100%{background-color:black;}
 }
 </style>
