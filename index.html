@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pink Valley Mega Log</title>
+<style>
+    body {
+        background: black;
+        color: #00ff00;
+        font-family: monospace;
+        padding: 20px;
+        white-space: pre;
+        overflow-y: scroll;
+        height: 100vh;
+    }
+    .line {
+        opacity: 0;
+        display: inline-block;
+        transition: opacity 0.3s, transform 0.1s;
+    }
+    .error {
+        color: #ff0000;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+<div id="log"></div>
+
+<script>
+// Генерация 200+ строк лога
+const lines = [
+|~USER_ID           : 01~|
+|~PROFILE_STATE     : RUNNING..~|
+|~RESPIRATION_MODULE: ENABLED~|
+|~OXYGEN_LEVEL      : 0% ::: ERROR_0x03~|
+|~CHEST_PRESSURE    : HIGH~|
+|~HEART_RATE        : 148 BPM~|
+|~BLOOD_OXYGEN      : CRITICAL~|
+|~ADRENALINE_LEVEL  : HIGH~|
+|~LOCATION_ID       : SUPERMARKET~|
+|~CURRENT_AREA      : TILE_CORRIDOR~|
+|~CORRIDOR_LENGTH   : EXTENDED~|
+|~LIGHTING_STATUS   : FLICKERING // ~~~~|
+|~AUDIO_INPUT       : STATIC && CRACKLE|
+|~NOISE_SOURCE      : UNKNOWN|
+|~ENTITY_SCAN       : POSITIVE|
+|~ENTITY_ID         : UNREGISTERED|
+|~ENTITY_DISTANCE   : VARIABLE|
+|~DOOR_ACCESS       : LOCKED|
+|~SAFE_ZONE         : NULL|
+|~ESCAPE_ROUTE      : NOT_FOUND|
+|~OBJECTIVE         : SURVIVE|
+|~SYSTEM_WARNING    : AIR_SUPPLY_CRITICAL|
+|~SYSTEM_WARNING    : ENVIRONMENT_UNSTABLE|
+|~SYSTEM_STATUS     : RUNNING|
+|~ENERGY_LEVEL      : LOW|
+|~TEMPERATURE       : RISING|
+|~SYSTEM_CHECK      : OK|
+|~REACTOR_STATUS    : STABLE|
+|~CORRIDOR_ALERT    : ACTIVE|
+|~LIGHTS_FAILURE    : FALSE|
+|~SECURITY_PROTOCOL : ENGAGED|
+|~ENTITY_ACTIVITY   : HIGH|
+|~RISK_LEVEL        : SEVERE|
+|~CAMERA_FEED       : ONLINE|
+|~VISUAL_FEED       : DISTORTED|
+|~SENSOR_FEED       : ACTIVE|
+|~NETWORK_STATUS    : CONNECTED|
+|~SYSTEM_LOG_SIZE   : 4521 KB|
+|~MEMORY_STATUS     : CRITICAL|
+|~CPU_USAGE         : 99% !!|
+|~DISK_SPACE        : LOW|
+|~ENVIRONMENT_STATUS: HOSTILE|
+|~ENTITY_BEHAVIOR   : UNPREDICTABLE|
+|~AUDIO_FEEDBACK    : SCREAMING|
+|~SYSTEM_GLITCH     : TRUE|
+|~ALL_FUCKING_IDIOTS_EXCEPT_ME~|
+|~SYSTEM_LOG_ENTRY_1 : ACTIVE~|
+|~SYSTEM_LOG_ENTRY_2 : ACTIVE~|
+|~SYSTEM_LOG_ENTRY_3 : ACTIVE~|
+...
+|~SYSTEM_LOG_ENTRY_200 : ACTIVE~|
+];
+
+// Добавим ещё строки до 200+
+for (let i=0; i<200; i++){
+    lines.push("|~SYSTEM_LOG_ENTRY_" + i + " : ACTIVE~|");
+}
+
+const logDiv = document.getElementById('log');
+let i = 0;
+
+function showLine() {
+    if (i >= lines.length) return;
+
+    const lineEl = document.createElement('div');
+    lineEl.className = 'line';
+
+    // шанс случайной ошибки 20%
+    if (Math.random() < 0.2) {
+        lineEl.textContent = "|~ERROR_UNKNOWN : CODE_" + Math.floor(Math.random()*999) + "~|";
+        lineEl.classList.add('error');
+    } else {
+        lineEl.textContent = lines[i];
+    }
+
+    logDiv.appendChild(lineEl);
+
+    // дрожание строки при появлении
+    setTimeout(() => {
+        lineEl.style.opacity = 1;
+        lineEl.style.transform = `translateX(${Math.random()*4-2}px) translateY(${Math.random()*4-2}px)`;
+    }, 50);
+
+    i++;
+    // случайная задержка 100–1500мс
+    setTimeout(showLine, 100 + Math.random()*1400);
+}
+
+showLine();
+</script>
+</body>
+</html>
