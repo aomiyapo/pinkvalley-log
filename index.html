@@ -1,142 +1,243 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Pink Valley Mega Log</title>
+<title>Pink Valley Terminal</title>
+
 <style>
-    body {
-        background: black;
-        color: #00ff00;
-        font-family: monospace;
-        padding: 20px;
-        white-space: pre;
-        overflow-y: scroll;
-        height: 100vh;
-    }
-    .line {
-        opacity: 0;
-        display: block;
-        transition: opacity 0.3s, transform 0.1s;
-        margin-bottom: 4px; /* расстояние между строками */
-    }
-    .error {
-        color: #ff0000;
-        font-weight: bold;
-    }
+body {
+    background: black;
+    color: #00ff00;
+    font-family: monospace;
+    margin: 0;
+    padding: 20px;
+    overflow: hidden;
+}
+
+/* контейнер */
+#log {
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* строки */
+.line {
+    opacity: 0;
+    transition: opacity 0.1s, transform 0.05s;
+    margin-bottom: 2px;
+}
+
+.error {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+/* ФАЗА СБОЯ */
+.failure {
+    animation: glitch 0.1s infinite;
+}
+
+@keyframes glitch {
+    0% { background-color: black; }
+    50% { background-color: #110000; }
+    100% { background-color: black; }
+}
 </style>
 </head>
 <body>
+
 <div id="log"></div>
 
 <script>
-// ==============================
-// Заменяешь массив lines на свой
-// ==============================
+const logDiv = document.getElementById('log');
+
+const lines = [];
+
+// стартовые строки
 const lines = [
+
 "|~USER_ID           : 01~|",
 "|~PROFILE_STATE     : RUNNING..~|",
 "|~RESPIRATION       : [ON]~|",
-"|~OXYGEN_LEVEL      : {NOT_FOUND}~|",
-"|~HEART_RATE        : 148@#&$*~|",
-"|~LOCATION          : SUPERMARKET~|",
-"|~ENTITY_SCAN       : POSITIVE~|",
-"|~DOOR_ACCESS       : FILE_NOT_EXIST~|",
-"|~ESCAPE_ROUTE      : NOT_FOUND~|",
-"|~SYSTEM_WARNING    : AIR_SUPPLY_CRITICAL~|",
-"|~SYSTEM_WARNING    : ENVIRONMENT_UNSTABLE~|",
-"|~SYSTEM_STATUS     : RUNNING~|",
-"|~ENERGY_LEVEL      : LOW~|",
-"|~TEMPERATURE       : RISING~|",
-"|~MEMORY_STATUS     : CRITICAL~|",
-"|~CPU_USAGE         : 99% !!~|",
-"|~DISK_SPACE        : LOW~|",
-"|~ENVIRONMENT_STATUS: HOSTILE~|",
-"|~ENTITY_BEHAVIOR   : UNPREDICTABLE~|",
-"|~AUDIO_FEEDBACK    : SCREAMING~|",
-"|~SYSTEM_GLITCH     : TRUE~|",
-"|~ALL_FUCKING_IDIOTS_EXCEPT_ME~|",
+"|~OXYGEN_LEVEL      : 98%~|",
+"|~HEART_RATE        : 72 BPM~|",
+"|~LOCATION          : UNKNOWN~|",
+
+// ===== СУПЕРМАРКЕТ =====
+
+"|~LOCATION_UPDATE   : SUPERMARKET~|",
+"|~LIGHTING_STATUS   : FLICKERING~|",
+"|~AUDIO_INPUT       : DISTANT HUM~|",
+"|~ENTITY_SCAN       : NEGATIVE~|",
 "|~CAMERA_FEED       : ONLINE~|",
-"|~VISUAL_FEED       : DISTORTED~|",
-"|~SENSOR_FEED       : ACTIVE~|",
-"|~NETWORK_STATUS    : CONNECTED~|",
-"|~CORRIDOR_ALERT    : ACTIVE~|",
-"|~LIGHTS_FAILURE    : FALSE~|",
-"|~SECURITY_PROTOCOL : ENGAGED~|",
-"|~RISK_LEVEL        : SEVERE~|",
-"|~CURRENT_AREA      : TILE_CORRIDOR~|",
-"|~CORRIDOR_LENGTH   : EXTENDED~|",
-"|~LIGHTING_STATUS   : FLICKERING ~~~~|",
-"|~AUDIO_INPUT       : STATIC && CRACKLE~|",
+"|~AISLE_03_STATUS   : EMPTY~|",
+"|~AISLE_07_STATUS   : PRODUCT_DISPLACED~|",
+"|~FREEZER_TEMP      : -12C~|",
+"|~OXYGEN_LEVEL      : 95%~|",
 "|~NOISE_SOURCE      : UNKNOWN~|",
-"|~ENTITY_ID         : UNREGISTERED~|",
-"|~ENTITY_DISTANCE   : VARIABLE~|",
-"|~OBJECTIVE         : SURVIVE~|",
-"|~SAFE_ZONE         : NULL~|",
-"|~SYSTEM_LOG_SIZE   : 4521 KB~|",
-"|~REACTOR_STATUS    : STABLE~|",
-"|~SYSTEM_CHECK      : OK~|",
-"|~ADRENALINE_LEVEL  : HIGH~|",
-"|~BLOOD_OXYGEN      : CRITICAL~|",
-"|~SYSTEM_LOG_ENTRY_1 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_2 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_3 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_4 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_5 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_6 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_7 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_8 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_9 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_10 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_11 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_12 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_13 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_14 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_15 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_16 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_17 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_18 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_19 : ACTIVE~|",
-"|~SYSTEM_LOG_ENTRY_20 : ACTIVE~|",
-...
-"|~SYSTEM_LOG_ENTRY_200 : ACTIVE~|"
+"|~ENTITY_SCAN       : POSITIVE~|",
+"|~ENTITY_DISTANCE   : 24m~|",
+"|~ENTITY_DISTANCE   : 18m~|",
+"|~ENTITY_DISTANCE   : 11m~|",
+"|~HEART_RATE        : 103 BPM~|",
+"|~ESCAPE_ROUTE      : BLOCKED~|",
+"|~DOOR_ACCESS       : DENIED~|",
+"|~AUDIO_FEEDBACK    : STATIC~|",
+
+// ===== ПЕРЕХОД =====
+
+"|~LOCATION_UPDATE   : TILE_CORRIDOR~|",
+"|~CORRIDOR_LENGTH   : EXTENDED~|",
+"|~LIGHTING_STATUS   : DIM~|",
+"|~WALL_PATTERN      : REPEATING~|",
+"|~ENTITY_SCAN       : LOST_SIGNAL~|",
+"|~FOOTSTEP_AUDIO    : ECHO~|",
+"|~HEART_RATE        : 119 BPM~|",
+"|~SYSTEM_GLITCH     : TRUE~|",
+"|~TEXTURE_ERROR     : CODE_441~|",
+"|~CORRIDOR_END      : NOT_FOUND~|",
+"|~CORRIDOR_END      : NOT_FOUND~|",
+"|~CORRIDOR_END      : NOT_FOUND~|",
+
+// ===== ШКОЛА =====
+
+"|~LOCATION_UPDATE   : SCHOOL_BUILDING~|",
+"|~ROOM_ID           : CLASSROOM_04~|",
+"|~BOARD_TEXT        : UNREADABLE~|",
+"|~DESK_COUNT        : 19~|",
+"|~STUDENT_STATUS    : NONE_PRESENT~|",
+"|~ENTITY_SCAN       : POSITIVE~|",
+"|~ENTITY_ID         : TILIN~|",
+"|~ENTITY_BEHAVIOR   : STATIONARY~|",
+"|~ENTITY_HEAD_ROT   : 180_DEG~|",
+"|~AUDIO_INPUT       : BREATHING~|",
+"|~HEART_RATE        : 137 BPM~|",
+"|~ESCAPE_ROUTE      : DOOR_OPEN~|",
+
+// ===== ДУШЕВАЯ =====
+
+"|~LOCATION_UPDATE   : SHOWER_ROOM~|",
+"|~WATER_FLOW        : ACTIVE~|",
+"|~TEMPERATURE       : 41C~|",
+"|~FLOOR_STATUS      : WET~|",
+"|~REFLECTION_STATUS : DISTORTED~|",
+"|~ENTITY_REFLECTION : PRESENT~|",
+"|~ENTITY_POSITION   : BEHIND_USER~|",
+"|~TURN_AROUND       : FALSE~|",
+"|~HEART_RATE        : 158 BPM~|",
+"|~OXYGEN_LEVEL      : 83%~|",
+"|~AUDIO_INPUT       : SCREAM_DETECTED~|",
+
+// ===== РАЗВАЛ СИСТЕМЫ =====
+
+"|~SYSTEM_WARNING    : MEMORY_CORRUPTION~|",
+"|~SYSTEM_WARNING    : STACK_OVERFLOW~|",
+"|~ENTITY_COUNT      : UNKNOWN~|",
+"|~REALITY_CHECK     : FAILED~|",
+"|~MAP_STATUS        : UNSTABLE~|",
+"|~LOCATION_UPDATE   : NULL~|",
+"|~PROFILE_STATE     : DESYNC~|",
+"|~ERROR_UNKNOWN     : CODE_132~|",
+"|~ERROR_UNKNOWN     : CODE_566~|",
+"|~ERROR_UNKNOWN     : CODE_704~|",
+"|~ERROR_UNKNOWN     : CODE_633~|",
+
+// ===== ФАЗА СБОЯ =====
+
+"|~SYSTEM_LOG_ENTRY_897 : ACTIVE~|",
+"|~SYSTEM_LOG_ENTRY_898 : ACTIVE~|",
+"|~SYSTEM_LOG_ENTRY_899 : ACTIVE~|",
+"|~SYSTEM_LOG_ENTRY_900 : ACTIVE~|",
+
+"|~CRITICAL_SYSTEM_FAILURE : CODE_9981~|",
+"|~CRITICAL_SYSTEM_FAILURE : CODE_4412~|",
+"|~CORE_TEMP               : RISING~|",
+"|~CORE_TEMP               : CRITICAL~|",
+"|~ENTITY_SCAN             : MULTIPLE_SIGNALS~|",
+"|~ENTITY_ID               : UNKNOWN~|",
+"|~ENTITY_ID               : UNKNOWN~|",
+"|~ENTITY_ID               : UNKNOWN~|",
+"|~PROFILE_STATE           : COLLAPSING~|",
+"|~REALITY_LAYER           : UNSTABLE~|",
+"|~VISION_FEED             : CORRUPTED~|",
+"|~AUDIO_FEED              : DISTORTED~|",
+"|~HEART_RATE              : ???~|",
+"|~OXYGEN_LEVEL            : ???~|",
+
+// ===== КОНЕЦ =====
+
+"|~SYSTEM_CORE             : OFFLINE~|",
+"|~SIGNAL_LOST             : TRUE~|",
+"|~PROFILE_STATE           : TERMINATED~|",
+"|~ENTITY_STATUS           : OBSERVING~|",
+"|~SESSION_END             : FALSE~|"
+
 ];
 
-// =================================
-// ВНИМАНИЕ: строки можно расширять до тысячи!
-// Просто заменяешь массив lines на свои строки
-// =================================
+// генерация 1000 строк
+for (let i = 1; i <= 1000; i++) {
+    lines.push(`|~SYSTEM_LOG_ENTRY_${i} : ACTIVE~|`);
+}
 
-const logDiv = document.getElementById('log');
 let i = 0;
+let failureMode = false;
 
 function showLine() {
-    if(i >= lines.length) return;
+
+    if (i >= lines.length) return;
 
     const lineEl = document.createElement('div');
     lineEl.className = 'line';
 
-    // 20% шанс случайной ошибки
-    if(Math.random() < 0.2){
-        lineEl.textContent = "|~ERROR_UNKNOWN : CODE_" + Math.floor(Math.random()*999) + "~|";
-        lineEl.classList.add('error');
+    // 🔥 включаем фазу сбоя после 900 строки
+    if (i > 900 && !failureMode) {
+        failureMode = true;
+        document.body.classList.add("failure");
+    }
+
+    if (failureMode) {
+        // в режиме сбоя почти всё красное
+        if (Math.random() < 0.6) {
+            lineEl.textContent =
+              `|~CRITICAL_SYSTEM_FAILURE : CODE_${Math.floor(Math.random()*9999)}~|`;
+            lineEl.classList.add('error');
+        } else {
+            lineEl.textContent = lines[i];
+        }
     } else {
-        lineEl.textContent = lines[i];
+        // обычный режим
+        if (Math.random() < 0.2) {
+            lineEl.textContent =
+              `|~ERROR_UNKNOWN : CODE_${Math.floor(Math.random()*999)}~|`;
+            lineEl.classList.add('error');
+        } else {
+            lineEl.textContent = lines[i];
+        }
     }
 
     logDiv.appendChild(lineEl);
 
-    // дрожание строки
+    // автоскролл
+    logDiv.scrollTop = logDiv.scrollHeight;
+
     setTimeout(() => {
         lineEl.style.opacity = 1;
-        lineEl.style.transform = `translateX(${Math.random()*4-2}px) translateY(${Math.random()*4-2}px)`;
-    }, 50);
+        lineEl.style.transform =
+            `translateX(${Math.random()*6-3}px) translateY(${Math.random()*6-3}px)`;
+    }, 5);
 
     i++;
-    // случайная задержка между 100–700 мс
-    setTimeout(showLine, 100 + Math.random()*600);
+
+    // ⚡ ускоряемся в режиме сбоя
+    if (failureMode) {
+        setTimeout(showLine, 5);
+    } else {
+        setTimeout(showLine, 20 + Math.random()*40);
+    }
 }
 
 showLine();
 </script>
+
 </body>
 </html>
