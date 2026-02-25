@@ -48,6 +48,7 @@ body{
 document.addEventListener('DOMContentLoaded', ()=>{
 
 const logDiv = document.getElementById('log');
+
 const lines = [
 "|~USER_ID           : 01~|",
 "|~PROFILE_STATE     : RUNNING..~|",
@@ -103,7 +104,6 @@ const lines = [
 "|~ENTITY_REFLECTION : PRESENT~|"
 ];
 
-// ENTRY Логи до 10_000
 for(let j=1;j<=10000;j++){
   lines.push(`|~SYSTEM_LOG_ENTRY_${j} : ACTIVE~|`);
 }
@@ -156,7 +156,6 @@ function showLine(){
       currentBlock++;
       if(currentBlock>=errorBlocks.length){
         panicMode=true;
-        // перевод всех строк в absolute для хаоса
         const allLines=document.querySelectorAll('.line');
         allLines.forEach(l=>{
           l.style.position="absolute";
@@ -165,8 +164,7 @@ function showLine(){
           l.style.transform=`rotate(${Math.random()*360-180}deg)`;
           flyingLines.push(l);
         });
-        // запуск анимации хаоса
-        updatePanic();
+        updatePanic(); // запускаем непрерывную анимацию
       }
     }
   }
@@ -184,7 +182,7 @@ function showLine(){
 
   logDiv.appendChild(lineEl);
 
-  // если паника уже, добавляем новую строку в массив разлетающихся
+  // если паника, добавляем новые строки в массив для полета
   if(panicMode){
     lineEl.style.position="absolute";
     lineEl.style.left=`${Math.random()*(window.innerWidth-100)}px`;
@@ -192,7 +190,7 @@ function showLine(){
     lineEl.style.transform=`rotate(${Math.random()*360-180}deg)`;
     flyingLines.push(lineEl);
   } else {
-    logDiv.scrollTop = logDiv.scrollHeight; // автоскролл до паники
+    logDiv.scrollTop = logDiv.scrollHeight; // автоскролл до блока
   }
 
   setTimeout(()=>{lineEl.style.opacity=1;},5);
